@@ -25,9 +25,20 @@ def get_new_zillow_data():
 
     sql = """
     SELECT 
-    bedroomcnt, bathroomcnt, calculatedfinishedsquarefeet, taxvaluedollarcnt, yearbuilt, taxamount, fips
+    bedroomcnt,
+    bathroomcnt,
+    fullbathcnt
+    garagecarcnt,
+    yearbuilt,
+    taxamount,
+    fips,
+    calculatedfinishedsquarefeet,
+    taxvaluedollarcnt,
+    lotsizesquarefeet,
+    landtaxvaluedollarcnt
     FROM properties_2017
     JOIN propertylandusetype USING (propertylandusetypeid)
+    JOIN predictions_2017 ON properties_2017.id = predictions_2017.id
     WHERE propertylandusedesc = "Single Family Residential"
     AND predictions_2017.transactiondate LIKE "2017%%"
     """
@@ -66,7 +77,17 @@ def clean_variables(df):
     # Drop 'taxamount' column (variable is inconsistent based on time and location of collected value, could lead to poor analysis)
     # Rename columns and 'fips' values to reflect actual location (to solidify column as categorical variable)
     df = df.drop(columns = 'taxamount')
-    df = df.rename(columns = {'bedroomcnt':'bedrooms', 'bathroomcnt':'bathrooms', 'calculatedfinishedsquarefeet':'sq_ft', 'taxvaluedollarcnt':'home_value', 'yearbuilt':'year_built', 'fips':'location'})
+    df = df.rename(columns = {'bedroomcnt':'bedrooms', 
+                              'bathroomcnt':'bathrooms', 
+                              'calculatedfinishedsquarefeet':'sq_ft', 
+                              'taxvaluedollarcnt':'home_value', 
+                              'yearbuilt':'year_built', 
+                              'fips':'location',
+                              'fullbathcnt':'full_bathrooms',
+                              'garagecarcnt':'garage_spaces',
+                              'lotsizesquarefeet':'lot_sq_ft',
+                              'landtaxvaluedollarcnt':'property_value'
+                             })
     df.location = df.location.replace(to_replace={6037:'LA County', 6059:'Orange County', 6111:'Ventura County'})
 
     return df 
