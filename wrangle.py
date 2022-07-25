@@ -34,8 +34,7 @@ def get_new_zillow_data():
     fips,
     calculatedfinishedsquarefeet,
     taxvaluedollarcnt,
-    lotsizesquarefeet,
-    landtaxvaluedollarcnt
+    lotsizesquarefeet
     FROM properties_2017
     JOIN propertylandusetype USING (propertylandusetypeid)
     JOIN predictions_2017 ON properties_2017.id = predictions_2017.id
@@ -69,7 +68,7 @@ def handle_outliers(df):
     
     df = df[df.bedroomcnt <= 6]
 
-    df = df[df.taxvaluedollarcnt < 2_000_000]
+    df = df[df.taxvaluedollarcnt < 1_500_000]
 
     return df
 
@@ -85,12 +84,21 @@ def clean_variables(df):
                               'fips':'location',
                               'fullbathcnt':'full_bathrooms',
                               'garagecarcnt':'garage_spaces',
-                              'lotsizesquarefeet':'lot_sq_ft',
-                              'landtaxvaluedollarcnt':'property_value'
+                              'lotsizesquarefeet':'lot_sq_ft'
                              })
     df.location = df.location.replace(to_replace={6037:'LA County', 6059:'Orange County', 6111:'Ventura County'})
 
     return df 
+
+def feature_engineering(df):
+    #
+    df["decade_built"] = pd.cut(x=df["year_built"], bins=[1800, 1899, 1909, 1919, 1929, 1939, 1949, 1959, 1969, 1979, 1989, 1999, 2009], labels=['1800s', '1900s', '10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s', '2000s'])
+    
+
+    df = df.dropna()
+
+    return df
+
 
 def wrangle_zillow():
     """
@@ -109,6 +117,8 @@ def wrangle_zillow():
     df = handle_outliers(df)
 
     df = clean_variables(df)
+
+    df = feature_engineering(df)
 
     # df.to_csv("zillow.csv", index=False)
 
