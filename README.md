@@ -9,9 +9,7 @@ My goal with this project is to identify Zillow's key drivers of home value and 
 
 ### Project Description
 
-Zillow is a website that utilizes a database of homes around the country in order to inform people who may be looking to buy, sell, or rent.
-
-The ability to predict home value is essential as new homes are built each year and some existing homes don't currently have assessed value within this database.
+At Zillow, the ability to predict home value is essential as new homes are built each year and some existing homes don't currently have assessed value within this database.
 
 In order to more accurately predict home value, we will analyze the attributes (features) of homes within a predetermined set of data. This dataset includes Single Family Properties that had a transaction during 2017.
 We will then develop models for predicting home value based on these attributes and provide recommendations and predictions to Zillow for improving prediction of home values moving forward.
@@ -36,8 +34,8 @@ We will then develop models for predicting home value based on these attributes 
 
 #### 4. Does county location affect home value?
 
-- Ho = Orange county home values <= Ventura or LA County home values
-- Ha = Orange county home values > Ventura or LA County home values
+- Ho = Population Means of the Home Values for Orange county, LA County, and Ventura County are all equal
+- Ha = Population Means of the Home Values for Orange county, LA County, and Ventura County are NOT all equal
 
 #### 5. Does a higher square footage increase home value?
 
@@ -64,10 +62,10 @@ We will then develop models for predicting home value based on these attributes 
 
 ### Steps to Reproduce (edit)
 
-1. You will need an env.py file that contains the hostname, username and password of the mySQL database that contains the telco dataset. Store that env file locally in the repository.
+1. You will need an env.py file that contains the hostname, username and password of the mySQL database that contains the zillow dataset. Store that env file locally in the repository.
 2. Clone my repo (including the acquire_telco.py, prepare.py and split_telco.py) 
    (confirm .gitignore is hiding your env.py file)
-3. To acquire the telco data, I used the telco_db in our mySQL server. I selected all columns from the customers table. I then joined this table with the contract_type, payment_type, and internet_service_type tables.
+3. To acquire the zillow data, I used the zillow_db in our mySQL server. I selected all columns from the properties_2017 table. I then joined this table with the propertylandusetype and predictions_2017 in order to narrow our data to reflect Single Family Properties that had a transaction during 2017. 
 4. Libraries used are pandas, matplotlib, seaborn, numpy, sklearn, scipy, and model. A full list of modules with specific tools are provided in my Full Report.
 5. Following these steps, you should be able to run the full report
 

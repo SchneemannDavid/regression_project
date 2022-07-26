@@ -1,9 +1,49 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
 import os
 from env import user, password, host
- 
+
+def get_db_url(database):
+    return f'mysql+pymysql://{user}:{password}@{host}/{database}'
+
+"""
+USAGE: 
+Use `from wrangle import wrangle_zillow` at the top of your notebook.
+This 
+"""
+def get_zillow_data():
+    """Seeks to read the cached zillow.csv first """
+    filename = "zillow.csv"
+
+    if os.path.isfile(filename):
+        return pd.read_csv(filename)
+    else:
+        return get_new_zillow_data()
+
+def get_new_zillow_data():
+    """Returns a dataframe of all 2017 properties that are Single Family Residential"""
+
+    sql = """
+    SELECT 
+    bedroomcnt,
+    bathroomcnt,
+    fullbathcnt
+    garagecarcnt,
+    yearbuilt,
+    taxamount,
+    fips,
+    calculatedfinishedsquarefeet,
+    taxvaluedollarcnt,
+    lotsizesquarefeet
+    FROM properties_2017
+    JOIN propertylandusetype USING (propertylandusetypeid)
+    JOIN predictions_2017 ON properties_2017.id = predictions_2017.id
+    WHERE propertylandusedesc = "Single Family Residential"
+    AND predictions_2017.transactiondate LIKE "2017%%"
+    """
+    df = pd.read_sql(sql, get_db_url('zillow'))
+    return df
+
 def handle_nulls(df):    
     # We keep 99.41% of the data after dropping nulls
     # round(df.dropna().shape[0] / df.shape[0], 4) returned .9941
@@ -51,65 +91,25 @@ def clean_variables(df):
     return df 
 
 def feature_engineering(df):
-    # Bin `year_built` by decade
+    #
     df["decade_built"] = pd.cut(x=df["year_built"], bins=[1800, 1899, 1909, 1919, 1929, 1939, 1949, 1959, 1969, 1979, 1989, 1999, 2009], labels=['1800s', '1900s', '10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s', '2000s'])
-    # Convert binary categorical variables to numeric
-    df['county_encoded'] = df.location.map({'LA County': 0, 'Orange County': 1, 'Ventura County': 2})
+    
 
     df = df.dropna()
 
     return df
 
-# Split for Exploration
 
-## 
-# Train, Validate, Test Split Function: for exploration
-def zillow_split_explore(df):
-    '''
-    This function performs split on telco data, stratifying on churn.
-    Returns train, validate, and test dfs.
-    '''
-    train_validate, test = train_test_split(df, test_size=.2,
-                                        random_state=123)
-    train, validate = train_test_split(train_validate, test_size=.3,
-                                   random_state=123)
-    return train, validate, test
-
-### ------------------------------------------------------------------------
-
-# Split for Modeling: X & Y dfs
-def zillow_split_model(df):
-    '''
-    This function performs split on telco data, stratifying on churn.
-    Returns both X and y train, validate, and test dfs
-    '''
-    
-    train_validate, test = train_test_split(df, test_size=.2,
-                                        random_state=123)
-    train, validate = train_test_split(train_validate, test_size=.3,
-                                   random_state=123)
-
-    # Splitting train, validate, and test dfs on x and y
-    x_train = train.drop(columns=['home_value'])
-    x_validate = validate.drop(columns=['home_value'])
-    x_test = test.drop(columns=['home_value'])
-
-    y_train = train['home_value']
-    y_validate = validate['home_value']
-    y_test = test['home_value']
-    
-    return x_train, y_train, x_validate, y_validate, x_test, y_test
-
-
-def prep_zillow(df):
+def wrangle_zillow():
     """
+    Acquires Zillow data
     Handles nulls
     optimizes or fixes data types
     handles outliers w/ manual logic
-    clean variables via dropping columns and renaming features
-    includes feature engineering 
     returns a clean dataframe
     """
+    df = get_zillow_data()
+
     df = handle_nulls(df)
 
     df = optimize_types(df)
@@ -120,10 +120,6 @@ def prep_zillow(df):
 
     df = feature_engineering(df)
 
-    train, validate, test = zillow_split_explore(df)
-
-    x_train, y_train, x_validate, y_validate, x_test, y_test = zillow_split_model(df)
-
     # df.to_csv("zillow.csv", index=False)
 
-    return df, train, validate, test, x_train, y_train, x_validate, y_validate, x_test, y_test
+    return df
