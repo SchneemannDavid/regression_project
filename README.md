@@ -19,28 +19,13 @@ We will then develop models for predicting home value based on these attributes 
 
 #### 1. Does a higher number of bedrooms increase home value?
 
-- Ho = More bedrooms translates to <= home value
-- Ha = More bedrooms translates to > home value
-
 #### 2. Does a higher number of bathrooms increase home value?
-
-- Ho = More bathrooms translates to <= home value
-- Ha = More bathrooms translates to > home value
 
 #### 3. Do more garage spaces increase home value?
 
-- Ho = More garage spaces translates to <= home value
-- Ha = More garage spaces translates to > home value
-
 #### 4. Does county location affect home value?
 
-- Ho = Population Means of the Home Values for Orange county, LA County, and Ventura County are all equal
-- Ha = Population Means of the Home Values for Orange county, LA County, and Ventura County are NOT all equal
-
 #### 5. Does a higher square footage increase home value?
-
-- Ho = More sq_ft translates to <= home value
-- Ha = More sq_ft translates to > home value
 
 
 
@@ -113,6 +98,7 @@ Below, I walk through all stages of my pipeline and process.
 6. Once a top performing model is selected, evaluate on test dataset
 
 
+
 ### Conclusion
 
 #### Summary
@@ -127,7 +113,7 @@ In seeking solutions to more accurately predict home value for Zillow, we have e
 
 The correlation of these features with home value, combined within our analysis and models, expresses confidence in the validity of our findings. We have created robust models that perform significantly better than our baseline estimated error of 270,460.
 
-Having fit the best performing model to our train, validate, and test datasets, we expect this model to perform 21% better than our baseline in the future on data it has not seen, given no major changes to our data source.
+Having fit the best performing model to our train, validate, and test datasets, we expect this model to perform 19.5% better than our baseline in the future on data it has not seen, given no major changes to our data source.
 
 #### Recommendations
 
