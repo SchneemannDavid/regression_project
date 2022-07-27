@@ -5,34 +5,30 @@ import seaborn as sns
 
 ## Visualization Functions for exploring zillow data ##
 
-# Pairwise Relationships Viz
+#-----------------------------------------------------------#
 
-def plot_variable_pairs(df):
-    train.sample(50)
-    sns.pairplot(train.sample(50), kind='reg', corner=True, plot_kws={'line_kws':{'color':'red'}})
+# Function which plots a categorical and continuous var
 
+def plot_categorical_and_continuous_vars(df, categorical, continuous):
+    df_sample = df.sample(1000)
+    #plt.figure()
+    #sns.countplot(x=categorical, data=df_sample)
+    plt.figure()
+    sns.swarmplot(x=categorical, y=continuous, data=df_sample)
+    plt.figure()
+    sns.boxplot(x=categorical, y=continuous, data=df_sample)
+    #plt.figure()
+    #sns.violinplot(x=categorical, y=continuous, data=df_sample)
+    plt.figure()
+    sns.barplot(x=categorical, y=continuous, data=df_sample)
 
-# Categorical & Continuous Vars Visualizations
+# Function which plots two continuous vars
 
-def plot_categorical_and_continuous_vars(df, cat_cols, cont_cols):
-    for cont in cont_cols:
-        for cat in cat_cols:
-            fig = plt.figure(figsize= (20, 10))
-            fig.suptitle(f'{cont} vs {cat}')
-            
-
-            plt.subplot(131)
-            sns.stripplot(data=df, x = cat, y = cont)
-           
-
-            plt.subplot(1, 3, 3)
-            sns.boxplot(data = df, x = cont, hue = cat)
-            
-            
-            plt.subplot(1, 3, 2)
-            sns.barplot(data = df, x = cat, y = cont)
-
-# Plot for above loop
-## plot_categorical_and_continuous_vars(train, cat_cols, cont_cols)
-
-
+def plot_continuous_and_continuous_vars(df, continuous1, continuous2):
+    df_sample = df.sample(1000)
+    #plt.figure()
+    #sns.relplot(x=continuous1, y=continuous2, data=df_sample, kind='scatter')
+    plt.figure()
+    sns.lmplot(x=continuous1, y=continuous2, data=df_sample, scatter=True, hue=None)
+    #plt.figure()
+    #sns.jointplot(x=continuous1, y=continuous2, data=df_sample, kind='scatter')
