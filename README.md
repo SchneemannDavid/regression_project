@@ -60,84 +60,93 @@ We will then develop models for predicting home value based on these attributes 
 
 
 
-### Steps to Reproduce (edit)
+### Steps to Reproduce
 
 1. You will need an env.py file that contains the hostname, username and password of the mySQL database that contains the zillow dataset. Store that env file locally in the repository.
-2. Clone my repo (including the acquire_telco.py, prepare.py and split_telco.py) 
+2. Clone my repo (including the acquire_telco.py, prepare.py) 
    (confirm .gitignore is hiding your env.py file)
 3. To acquire the zillow data, I used the zillow_db in our mySQL server. I selected all columns from the properties_2017 table. I then joined this table with the propertylandusetype and predictions_2017 in order to narrow our data to reflect Single Family Properties that had a transaction during 2017. 
 4. Libraries used are pandas, matplotlib, seaborn, numpy, sklearn, scipy, and model. A full list of modules with specific tools are provided in my Full Report.
-5. Following these steps, you should be able to run the full report
+5. Following these steps, you should return the exact dataset I used to in my report.
 
 
-### The Plan (edit)
+### The Plan
 Below, I walk through all stages of my pipeline and process.
 
 #### Wrangle
-##### Modules (acquire_telco.py + prepare.py + telco_split.py)
+##### Modules (acquire.py + prepare.py)
 
 1. Test acquire function
-2. Add to acquire_telco.py module
+2. Add to acquire.py module
 3. Write and test function to clean data
 4. Add to prepare.py module
 5. Write and test function to split data
-6. Add to split_telco.py module
+6. Add to prepare.py module
 
-#### Explore
+#### Explore 
+##### Modules (explore.py)
 
-1. Ask 4 distinct questions of our data \
-  a. Do M2m customers churn more than 1-yr or 2-yr customers? \
-  b. Does paying by electronic check influence churn? Do customers paying by electronic check churn more than other        payment types? \
-  c. Do customers with Fiber churn more than other internet service types? \
-  d. Do adults with dependents churn more than adults without dependents? Furthermore, are single adults more likely to churn than customers with a partner? \
-2. Explore these questions through visualizations \
+1. Ask 5 distinct questions of our data \
+  a. Does a higher number of bedrooms increase home value? \
+  b. Does a higher number of bathrooms increase home value? \
+  c. Do more garage spaces increase home value? \
+  d. Does location by county affect home value? \
+  e. Does a higher square footage increase home value? \
+2. Explore these questions through visualizations, calling explore.py as needed \
   a. Barplots are used primarily due to our features being categorical variables \
-  b. These plots illustrate statistical significance of our chosen features \
+  b. For our continuous variable, lmplots with line of best fit is used \
+  c. These plots illustrate correlation of our chosen features with home value \
 3. Statistical Testing is conducted on all relevant features to determine statistical significance \
 4. Summary includes key takeaways from all features explored \
 
 #### Modeling and Evaluate
+##### Modules (model.py)
 
-1. Select Evaluation Metric: Accuracy
-2. Evaluate a Baseline: ~73%
-3. Develop 3 distinct models
-4. Evaluate on Train and then on Validate (for promising feature sets)
-5. Once a top performing model is selected, evaluate on test dataset
+1. Select Evaluation Metric: Correlation, namely RMSE
+2. Scale the data utilizing our model.py scaling function
+3. Evaluate a Baseline: 272,118 (error in dollars)
+4. Develop 3 distinct models
+    a. Linear Regression
+    b. Lasso Lars
+    c. TweedieRegressor
+5. Evaluate on Train and then on Validate (for promising feature sets)
+6. Once a top performing model is selected, evaluate on test dataset
 
 
-### Conclusion (edit)
+### Conclusion
 
 #### Summary
 
-In seeking solutions to Telco's churn, we have explored a multiplicity of factors in the dataset that affect churn rate. We have shown that some potential primary drivers of churn are :
+In seeking solutions to more accurately predict home value for Zillow, we have explored a multiplicity of factors in the dataset that affect home value. We have shown that some potential primary drivers of home value are :
 
-- Having a month-to-month contract
-- Paying by electronic check 
-- Paying for fiber internet
-- Having a contract as a single adult, without a partner or dependents.
+- The number of bedrooms in a home
+- The number of bathrooms in a home 
+- The number of garage spaces in a home
+- The location of a home by county
+- The square footage of a home
 
-The statistical significance of these features, combined within our analysis and models, expresses 95% confidence in the validity of our findings. With the addition of the other features within contract type, payment type, internet type, and family type, we have created robust models that perform significantly better than our baseline of 73%.
+The correlation of these features with home value, combined within our analysis and models, expresses confidence in the validity of our findings. We have created robust models that perform significantly better than our baseline estimated error of 270,460.
 
-Having fit the best performing model to our train, validate, and test datasets, we expect this model to perform with 80% accuracy in the future on data it has not seen, given no major changes to our data source.
+Having fit the best performing model to our train, validate, and test datasets, we expect this model to perform 21% better than our baseline in the future on data it has not seen, given no major changes to our data source.
 
 #### Recommendations
 
-There are a number of recommendations that can be offered based on the above analysis. These suggestions are tied directly to the findings within each of our primary drivers of churn:
+There are a number of recommendations that can be offered based on the above analysis. These suggestions are tied to the findings within our primary drivers of home value:
 
-1. Month-to-Month contracts (m2m) - Although month-to-month contracts are here to stay, we could feasibly limit churn by offering a discount on 1 and 2 yr contracts. By offering a discount that still maintains a healthy profit margin, we could incentivize customers to sign on for longer contracts which is shown to reduce churn in the long term.
-
-2. Electronic check (e_check) - We have shown that churn is significantly higher for electronic check customers than any other payment type. Although there are multiple potential solutions to this phenomenon, I believe Telco needs to perform a full review of the customer process for submitting payment via electronic check. It is my experience that online portals for submitting payment by e-check can be inefficient, not well designed, and frustrating to the user. This could be a significant reason why customers who use this method of payment are cancelling their contracts.
-
-3. Fiber internet - Customers with this internet type express a significant likelihood of churn, despite Fiber being the optimal option for internet access. Although fiber is undoubtedly more expensive to implement, due to infrastructure costs, the amount of potential churn of this internet type needs to inform our business practices. Options include a potential discount for fiber customers if this is profitably viable. Otherwise, increased company investment in fiber infrastructure may lead to increased profit margin down the road, allowing the company greater leverage for retaining these customers. 
-
-4. Customers with no partner or dependents (no_pod) - This customer demographic has a significant likelihood of churn. Yet, attempting to retain these customers may not be the most effective option for maximizing customer retention. Instead, by observing the likelihood of churn for other partner/dependent statuses, we find that customers with dependents are less likely to churn. Therefore, offering a family discount for those customers who have dependents could attract more customers who fall under this demographic. This customer base has shown to be less likely to churn, thus decreasing potential churn by attracting more stable and committed customers.
+1. Based on our exploration of bedroom and bathroom counts, collecting additional data on how many rooms are in a home, including more specific data on living spaces versus kitchens and other spaces
+2. Kitchen data, namely which major appliances and amenities are available in a given home. (ie. dishwasher, kitchen island, etc.)
+3. In collecting more nuanced data about a home, I suggest we send out emails prompting home owners with limited data on their home in the Zillow database to provide additional details about their residence.
 
 #### Next Steps
 
 Despite the overall effectiveness of our best-performing model, there is always room for improvement and optimization. \
-If given more time to pursue a better results, I would begin by further exploration and analysis of other features within our dataset. Through additional exploration I've already performed, I can say with confidence that there are a number of features I could analyze and implement into my models to improve prediction accuracy. \
-Namely, observing features such as whether a customer has online security or tech support could improve our models' predictions.
+If given more time to pursue a better results, I would begin by conducting further exploration and analysis of other features within our dataset. These features could include:
+- Whether a home has a pool
+- The square footage of the property, not just the home
 
-Additionally, prompting customers who churn to fill out a simple satisfaction survey could produce meaningful insight into more specific reasons customers choose to cancel their contracts. This information could be analyzed using methods such as Natural Language Processing in order to improve Telco's understanding of its customers' needs and the resulting customer service they provide.
+In addition to exploring other features, I would look into methods for more appropriately separating our data into additional housing categories. For example:
+- Calculating a ratio of home square footage against square footage of the entire property. This home to property ratio could be valuable.
+- Narrowing a home's location to pinpoint the city and specific neighborhood a home is in. 
 
+By optimizing our dataset to include the above categories, I believe we could increase the correlation of our feature set with home value and improve model prediction accuracy.
 
